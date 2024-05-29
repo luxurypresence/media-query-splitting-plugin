@@ -1,3 +1,3 @@
-const plugin = require('./dist');
+import plugin from './dist';
 
-module.exports = plugin;
+export default plugin;
