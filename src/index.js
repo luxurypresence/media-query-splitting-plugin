@@ -1,15 +1,19 @@
-const getOptions = require('./getOptions')
-const handleApply = require('./handleApply')
-
+const getOptions = require("./getOptions");
+const handleApply = require("./handleApply");
 
 module.exports = class MediaQuerySplittingPlugin {
-
   constructor(options) {
-    this.options = getOptions(options)
+    this.options = getOptions(options);
   }
 
   apply(compiler) {
-    const { media: mediaOptions, minify, chunkFileName, exclude } = this.options
+    const {
+      media: mediaOptions,
+      minify,
+      chunkFileName,
+      exclude,
+      keepOriginal,
+    } = this.options;
 
     handleApply({
       compiler,
@@ -18,7 +22,8 @@ module.exports = class MediaQuerySplittingPlugin {
         mediaOptions,
         minify,
         exclude,
+        keepOriginal,
       },
-    })
+    });
   }
-}
+};

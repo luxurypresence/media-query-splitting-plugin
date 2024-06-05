@@ -3,7 +3,8 @@ const splitByMediaQuery = require("./splitByMediaQuery");
 const { sha1 } = require("crypto-hash");
 
 const handleApply = ({ compiler, options }) => {
-  const { mediaOptions, minify, exclude, chunkFileName } = options;
+  const { mediaOptions, minify, exclude, chunkFileName, keepOriginal } =
+    options;
 
   const pluginName = "media-query-splitting-plugin";
 
@@ -91,7 +92,6 @@ const handleApply = ({ compiler, options }) => {
             if (isCommon && (!splittedMediaChunk || needRemoveCommonChunk)) {
               // TODO use optimizeChunks.hook instead
               const path = `${outputPath}/${chunkName}`;
-
               if (fs.existsSync(path)) {
                 fs.unlinkSync(path);
                 assets[chunkName] = undefined;
@@ -122,6 +122,7 @@ const handleApply = ({ compiler, options }) => {
                     const splittedMediaChunkName = isCommon
                       ? chunkName
                       : splittedMediaChunkNameParts.join(".");
+
                     cssChunksByMedia[mediaChunkId][
                       cssChunksMedia.indexOf(mediaType)
                     ] = {
@@ -144,12 +145,19 @@ const handleApply = ({ compiler, options }) => {
                             cssChunksMedia.indexOf(mediaType)
                           ),
                     };
-
-                    // Add chunk to assets
-                    assets[splittedMediaChunkName] = {
-                      size: () => Buffer.byteLength(splittedMediaChunk, "utf8"),
-                      source: () => Buffer.from(splittedMediaChunk),
-                    };
+                    if (keepOriginal && isCommon) {
+                      assets[splittedMediaChunkName] = {
+                        size: () => Buffer.byteLength(chunkValue, "utf8"),
+                        source: () => Buffer.from(chunkValue),
+                      };
+                    } else {
+                      // Add chunk to assets
+                      assets[splittedMediaChunkName] = {
+                        size: () =>
+                          Buffer.byteLength(splittedMediaChunk, "utf8"),
+                        source: () => Buffer.from(splittedMediaChunk),
+                      };
+                    }
 
                     resolve();
                   });

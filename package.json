@@ -1,6 +1,6 @@
 {
   "name": "@luxury-presence/media-query-splitting-plugin",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "Forked in order to migrate to support webpack v5",
   "main": "src/index.js",
   "scripts": {
